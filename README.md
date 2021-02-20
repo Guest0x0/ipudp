@@ -229,4 +229,4 @@ Entry point. Pretty much just combines the above scripts.
 [icmptunnel](https://github.com/dhavalkapil/icmptunnel)
 
 ## License
-WTFPL
+0BSD
