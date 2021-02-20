@@ -30,7 +30,7 @@ python main.py -key 64BIT_HEX_KEY -client SERVER_IP:SERVER_PORT -tunnel udp \
 On the server side, as root or with `CAP_NET_ADMIN`:
 ```
 python main.py -key SAME_KEY_AS_CLIENT -server SERVER_PORT -tunnel udp \
-    [-auth VARIABLE_LENGTH_AUTHENTICATION_MESSAGE] \
+    [-auth SAME_AUTH_MESSAGE_AS_CLIENT] \
     [-padding PACKET_SMALLER_THAN_THIS_WILL_BE_PADDED] \
     [-mtu MTU_TO_USE_DEFAULT_TO_1500] \
     [-tun THE_NAME_OF_THE_TUN_DEVICE]
@@ -65,6 +65,13 @@ including TCP, UDP, or even ICMP, without the need to configure applications.
 But it also means that only one client can connect to the remote server at a time,
 as port mapping is impossible at the Networking Layer.
 
+- The protocol for communication between client and server is UDP.
+As the connectionless property of UDP can reduce tunneling overhead.
+However, other protocols are possible, too.
+Again, the tunneling part is designed to be modular.
+When UDP is not the best option,
+switching to other protocols like TCP or ICMP should be easy.
+
 - Instead of using complicated ciphers like AES, TLS, etc.. `ipudp` uses a very simple
 reactive (stream cipher with key stream dependent on all previous plaintext bytes as well)
 cipher. This cipher is undoubtedly uncomparable to well-tested industrial ciphers.
@@ -88,13 +95,6 @@ as if the server is not responsive.
 While this authentication method introduces more traffic overhead,
 it completely eliminates the traffic pattern of hand-shaking.
 Smarter authentication methods can be integrated easily, of course.
-
-- The protocol for communication between client and server is UDP.
-As the connectionless property of UDP can reduce tunneling overhead.
-However, other protocols are possible, too.
-Again, the tunneling part is designed to be modular.
-When UDP is not the best option,
-switching to other protocols like TCP or ICMP should be easy.
 
 In general, `ipudp` does not try to be general, or make the best decision everywhere.
 Instead, it tries to be a framework which allow various design options to be altered easily.
@@ -178,6 +178,10 @@ __init__(
     padding_range, # a pair of int, specifying the range of the payload size of padded packets
     logger # as described above
 ): initializer
+
+socket:
+    The socket used for the tunnel.
+    A possible improvement would be to make the whole class selectors-compatible.
 
 send(self, data): Send data over the tunnel. len(data) < self.MTU.
     Should handle insertion of authentication message, encryption, and padding
