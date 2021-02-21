@@ -61,3 +61,4 @@ class UDPTun:
             return msg[len(self.auth_msg)+2:len(self.auth_msg)+2+data_size]
         else:
             self.logger.log("authentication failure from " + str(self.remote_addr))
+            return None

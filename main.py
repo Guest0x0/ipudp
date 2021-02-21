@@ -110,4 +110,5 @@ while True:
             tunnel.send(data)
         elif skey.data == 1:
             data = tunnel.recv()
-            os.write(tun.fd, data)
+            if data is not None:
+                os.write(tun.fd, data)
